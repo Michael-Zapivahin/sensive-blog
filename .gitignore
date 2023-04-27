@@ -24,6 +24,9 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+notes.md
+/media
+/.idea
 MANIFEST
 
 # PyInstaller
@@ -136,3 +139,4 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+.DS_Store

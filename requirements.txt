@@ -1,3 +1,3 @@
-Django==3.1.*
-environs[django]==9.3.0
-Pillow==8.0.*  # required by Windows environment
+Django==2.2.24
+environs==5.2.1
+Pillow==8.3.2
