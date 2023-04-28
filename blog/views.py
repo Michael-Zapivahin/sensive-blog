@@ -35,11 +35,9 @@ def index(request):
     fresh_posts = Post.objects.order_by('published_at')
     most_fresh_posts = list(fresh_posts)[-5:]
 
-    tags = Tag.objects.order_by('title')
-    # popular_tags = sorted(tags, key=get_related_posts_count)
-    popular_tags = list(tags)
+    tags = Tag.objects.all()
+    popular_tags = sorted(tags, key=get_related_posts_count)
     most_popular_tags = popular_tags[-5:]
-
 
     context = {
         'most_popular_posts': [serialize_post(post) for post in most_popular_posts],
@@ -118,3 +116,4 @@ def contacts(request):
     # позже здесь будет код для статистики заходов на эту страницу
     # и для записи фидбека
     return render(request, 'contacts.html', {})
+
