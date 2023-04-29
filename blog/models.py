@@ -7,12 +7,22 @@ from django.db.models import Count
 class PostQuerySet(models.QuerySet):
 
     def popular(self):
-        posts_popular = self.annotate(likes_count=Count('likes')).order_by('-likes_count')
+        posts_popular = self.prefetch_related('tags').annotate(likes_count=Count('likes')).order_by('-likes_count')
         return posts_popular
 
     def fresh(self):
         posts_fresh = self.order_by('-published_at')
         return posts_fresh
+
+    def fetch_with_comments_count(self):
+        most_popular_posts_ids = [post.id for post in self]
+        posts_with_comments = Post.objects.filter(id__in=most_popular_posts_ids).annotate(
+            comments_count=Count('comments'))
+        ids_and_comments = posts_with_comments.values_list('id', 'comments_count')
+        count_for_id = dict(ids_and_comments)
+        for post in self:
+            post.comments_count = count_for_id[post.id]
+        return self
 
 
 class PostManager(models.Manager):
@@ -24,6 +34,9 @@ class PostManager(models.Manager):
 
     def fresh(self):
         return self.get_queryset().fresh()
+
+    def fetch_with_comments_count(self):
+        return self.get_queryset().fetch_with_comments_count()
 
 
 class Post(models.Model):
