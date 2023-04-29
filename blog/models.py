@@ -1,6 +1,29 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.db.models import Count
+
+
+class PostQuerySet(models.QuerySet):
+
+    def popular(self):
+        posts_popular = self.annotate(likes_count=Count('likes')).order_by('-likes_count')
+        return posts_popular
+
+    def fresh(self):
+        posts_fresh = self.order_by('-published_at')
+        return posts_fresh
+
+
+class PostManager(models.Manager):
+    def get_queryset(self):
+        return PostQuerySet(self.model, using=self._db)
+
+    def popular(self):
+        return self.get_queryset().popular()
+
+    def fresh(self):
+        return self.get_queryset().fresh()
 
 
 class Post(models.Model):
@@ -9,6 +32,8 @@ class Post(models.Model):
     slug = models.SlugField('Название в виде url', max_length=200)
     image = models.ImageField('Картинка')
     published_at = models.DateTimeField('Дата и время публикации')
+
+    objects = PostManager()
 
     author = models.ForeignKey(
         User,
@@ -37,9 +62,24 @@ class Post(models.Model):
         verbose_name_plural = 'посты'
 
 
+class TagQuerySet(models.QuerySet):
+
+    def popular(self):
+        tag_popular = self.annotate(posts_count=Count('posts')).order_by('-posts_count')
+        return tag_popular
+
+
+class TagManager(models.Manager):
+    def get_queryset(self):
+        return TagQuerySet(self.model, using=self._db)
+
+    def popular(self):
+        return self.get_queryset().popular()
+
+
 class Tag(models.Model):
     title = models.CharField('Тег', max_length=20, unique=True)
-
+    objects = TagManager()
     def __str__(self):
         return self.title
 
