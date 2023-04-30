@@ -1,17 +1,17 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 
 
 class PostQuerySet(models.QuerySet):
 
     def popular(self):
-        posts_popular = self.prefetch_related('tags').annotate(likes_count=Count('likes')).order_by('-likes_count')
+        posts_popular = self.prefetch_related(Prefetch('tags')).annotate(likes_count=Count('likes')).order_by('-likes_count')
         return posts_popular
 
     def fresh(self):
-        posts_fresh = self.prefetch_related('tags').order_by('-published_at')
+        posts_fresh = self.prefetch_related(Prefetch('tags')).order_by('-published_at')
         return posts_fresh
 
     def fetch_with_comments_count(self):

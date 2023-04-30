@@ -2,11 +2,7 @@ from django.shortcuts import render
 from blog.models import Comment
 from blog.models import Post
 from blog.models import Tag
-from django.db.models import Count
-
-
-def get_related_posts_count(tag):
-    return tag.posts_count
+from django.db.models import Count, Prefetch
 
 
 def serialize_post_optimized(post):
@@ -68,7 +64,7 @@ def post_detail(request, slug):
         })
 
     likes = post.likes.all()
-    related_tags = post.tags.all().annotate(posts_count=Count('posts'))
+    related_tags = post.tags.all().prefetch_related(Prefetch('posts')).annotate(posts_count=Count('posts'))
     serialized_post = {
         'title': post.title,
         'text': post.text,
@@ -110,10 +106,4 @@ def contacts(request):
     return render(request, 'contacts.html', {})
 
 
-def pp():
-    from blog.models import Tag
-    tags = (Tag.objects.popular()[:5])
-    print([serialize_tag(tag) for tag in tags])
-    for tag in tags:
-        print(tag.title, tag.posts_count)
 
