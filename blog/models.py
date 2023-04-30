@@ -11,7 +11,7 @@ class PostQuerySet(models.QuerySet):
         return posts_popular
 
     def fresh(self):
-        posts_fresh = self.order_by('-published_at')
+        posts_fresh = self.prefetch_related('tags').order_by('-published_at')
         return posts_fresh
 
     def fetch_with_comments_count(self):
