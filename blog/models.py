@@ -47,8 +47,6 @@ class Post(models.Model):
     image = models.ImageField('Картинка')
     published_at = models.DateTimeField('Дата и время публикации')
 
-    objects = PostManager()
-
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -63,6 +61,8 @@ class Post(models.Model):
         'Tag',
         related_name='posts',
         verbose_name='Теги')
+
+    objects = PostManager()
 
     def __str__(self):
         return self.title
@@ -93,6 +93,7 @@ class TagManager(models.Manager):
 
 class Tag(models.Model):
     title = models.CharField('Тег', max_length=20, unique=True)
+
     objects = TagManager()
 
     def __str__(self):
