@@ -48,7 +48,7 @@ def post_detail(request, slug):
             'published_at': comment.published_at,
             'author': comment.author.username,
         })
-    related_tags = post.tags.all().prefetch_related(Prefetch('posts')).annotate(posts_count=Count('posts'))
+    related_tags = post.tags.popular().annotate(posts_count=Count('posts'))
     serialized_post = {
         'title': post.title,
         'text': post.text,
