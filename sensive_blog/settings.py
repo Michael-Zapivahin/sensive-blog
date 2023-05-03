@@ -14,13 +14,6 @@ SECRET_KEY = env.str('SECRET_KEY', 'REPLACE_ME')
 
 DEBUG = env.bool('DEBUG', True)
 
-
-INTERNAL_IPS = [
-    # ...
-    "127.0.0.1",
-    # ...
-]
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -102,8 +95,17 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_URL = os.getenv('STATIC_URL', '/static/')
 
-MEDIA_URL = '/media/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"), )
+
+MEDIA_ROOT = os.getenv("MEDIA_ROOT", os.path.join(BASE_DIR, 'media'))
+
+STATIC_ROOT = os.getenv("STATIC_ROOT")
+
+MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]

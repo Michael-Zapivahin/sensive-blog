@@ -12,6 +12,10 @@ urlpatterns = [
     path('tag/<slug:tag_title>', views.tag_filter, name='tag_filter'),
     path('contacts/', views.contacts, name='contacts'),
     path('', views.index, name='index'),
-    path('__debug__/', include('debug_toolbar.urls')),
-]
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ]
