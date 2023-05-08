@@ -28,7 +28,7 @@ class PostQuerySet(models.QuerySet):
 
 class PostManager(models.Manager):
     def get_queryset(self):
-        return PostQuerySet(self.model, using=self._db)
+        return PostQuerySet(self.model, using=self._db).select_related('author')
 
     def popular(self):
         return self.get_queryset().popular()
@@ -79,13 +79,13 @@ class Post(models.Model):
 class TagQuerySet(models.QuerySet):
 
     def popular(self):
-        tag_popular = self.annotate(posts_count=Count('posts')).order_by('-posts_count')
+        tag_popular = self.order_by('-posts_count')
         return tag_popular
 
 
 class TagManager(models.Manager):
     def get_queryset(self):
-        return TagQuerySet(self.model, using=self._db)
+        return TagQuerySet(self.model, using=self._db).annotate(posts_count=Count('posts'))
 
     def popular(self):
         return self.get_queryset().popular()
