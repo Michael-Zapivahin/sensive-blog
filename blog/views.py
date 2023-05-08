@@ -74,7 +74,7 @@ def tag_filter(request, tag_title):
     tag = get_object_or_404(Tag, title=tag_title)
     most_popular_tags = Tag.objects.popular()[:5]
     most_popular_posts = Post.objects.popular()[:5].fetch_with_comments_count()
-    related_posts = tag.posts.prefetch_related('author')[:20].fetch_with_comments_count()
+    related_posts = tag.posts.popular()[:20].fetch_with_comments_count()
     context = {
         'tag': tag.title,
         'popular_tags': [serialize_tag(tag) for tag in most_popular_tags],
